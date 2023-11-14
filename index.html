@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+</head>
+<body>
+    <h1>User Details</h1>
+
+    <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" required>
+
+        <input type="hidden" id="editIndex" value="-1"> <!-- Hidden input to store the index of the user being edited -->
+
+        <button type="button" onclick="saveUser()">Submit</button>
+    </form>
+
+    <div id="userList">
+        <!-- User details will be displayed here -->
+    </div>
+
+    <script>
+        // Array to store user details
+        let users = [];
+
+        function saveUser() {
+            // Get values from the form
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Get the index of the user being edited
+            const editIndex = document.getElementById('editIndex').value;
+
+            if (editIndex === '-1') {
+                // Create user object
+                const user = {
+                    name: name,
+                    email: email,
+                    phoneNumber: phoneNumber
+                };
+
+                // Add user to the array
+                users.push(user);
+            } else {
+                // Edit existing user
+                users[editIndex].name = name;
+                users[editIndex].email = email;
+                users[editIndex].phoneNumber = phoneNumber;
+
+                // Reset editIndex
+                document.getElementById('editIndex').value = '-1';
+            }
+
+            // Display user details
+            displayUsers();
+
+            // Clear the form
+            document.getElementById('userForm').reset();
+        }
+
+        function displayUsers() {
+            // Get the user list container
+            const userList = document.getElementById('userList');
+
+            // Clear previous content
+            userList.innerHTML = '';
+
+            // Display each user in the array
+            users.forEach((user, index) => {
+                // Create a div for each user
+                const userDiv = document.createElement('div');
+                userDiv.innerHTML = `<p>Name: ${user.name}</p>
+                                     <p>Email: ${user.email}</p>
+                                     <p>Phone Number: ${user.phoneNumber}</p>
+                                     <button onclick="editUser(${index})">&#9998;</button>
+                                     <button onclick="deleteUser(${index})">&#10006;</button>`; // Edit (✎) and Delete (×) icons
+
+                // Append the div to the user list container
+                userList.appendChild(userDiv);
+            });
+        }
+
+        function editUser(index) {
+            // Get the user from the array
+            const user = users[index];
+
+            // Set the form values with the user details
+            document.getElementById('name').value = user.name;
+            document.getElementById('email').value = user.email;
+            document.getElementById('phoneNumber').value = user.phoneNumber;
+
+            // Set the editIndex
+            document.getElementById('editIndex').value = index;
+
+            // Display the updated user list
+            displayUsers();
+        }
+
+        function deleteUser(index) {
+            // Remove the user from the array
+            users.splice(index, 1);
+
+            // Display the updated user list
+            displayUsers();
+        }
+    </script>
+</body>
+</html>
+
